@@ -2,7 +2,10 @@
 
 set -e
 
+# the ip-address:port combination that we will connect to Hadoop
 HADOOP_ADDRESS="0.0.0.0:9000"
+
+# the port that will be exposed for accessing the container. if this isn't specified a random unused port is selected
 PORT=""
 
 while getopts ":a:p:" opt; do
@@ -15,8 +18,6 @@ while getopts ":a:p:" opt; do
     ;;
   esac
 done
-
-set -x
 
 echo "hadoop address set to: ${HADOOP_ADDRESS}"
 
@@ -40,7 +41,6 @@ then
       PORT="$(get_unused_port)"
 fi
 
-
-
 docker run -p ${PORT}:8000 --detach go-webhdfs  
+echo "starting go-webhdfs"
 echo "go-webhdfs is running on port: ${PORT}"
