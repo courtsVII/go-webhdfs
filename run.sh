@@ -18,12 +18,13 @@ echo "hadoop address set to: ${HADOOP_ADDRESS}"
 
 docker build -t go-webhdfs --build-arg DOCKER_HADOOP_ADDRESS=${HADOOP_ADDRESS} . 
 
-MIN_PORT=30000;
-MAX_PORT=60000;
-RANGE=$(($MAX_PORT-$MIN_PORT+1));
-RANDOM_PORT=$RANDOM;
-let "RANDOM_PORT %= $RANGE";
-PORT=$(($RANDOM_PORT+$MIN_PORT));
+function get_unused_port() {
+  for port in $(seq 4444 65000);
+  do
+    [ $? -eq 1 ] && echo "$port" && break;
+  done
+}
+PORT="$(get_unused_port)"
 
-docker run -p ${PORT}:8000 go-webhdfs  &
+docker run -p ${PORT}:8000 --detach go-webhdfs  
 echo "go-webhdfs is running on port: ${PORT}"
