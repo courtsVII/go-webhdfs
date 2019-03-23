@@ -2,6 +2,10 @@
 
 set -e
 
+# set working directory to script location
+cd "${0%/*}"
+echo "using working directory $(pwd)"
+
 # the ip-address:port combination that we will connect to Hadoop
 HADOOP_ADDRESS="0.0.0.0:9000"
 
