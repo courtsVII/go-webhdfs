@@ -25,7 +25,7 @@ done
 
 echo "hadoop address set to: ${HADOOP_ADDRESS}"
 
-docker build -t go-webhdfs --build-arg DOCKER_HADOOP_ADDRESS=${HADOOP_ADDRESS} . 
+docker build -t go-webhdfs . 
 
 function get_unused_port() {
   LPORT=32768;
@@ -45,6 +45,6 @@ then
       PORT="$(get_unused_port)"
 fi
 
-docker run -p ${PORT}:8000 --detach go-webhdfs  
+docker run -e HADOOP_ADDRESS=${HADOOP_ADDRESS} -p ${PORT}:8000 --detach go-webhdfs
 echo "starting go-webhdfs"
 echo "go-webhdfs is running on port: ${PORT}"
