@@ -2,7 +2,10 @@ package hdfs
 
 import (
 	"fmt"
+	"log"
 	"net/http"
+	"os"
+	"strconv"
 )
 
 func Mv(w http.ResponseWriter, r *http.Request) {
@@ -13,6 +16,17 @@ func Mv(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "mv %s %s \n", src, dst)
 	} else {
 		fmt.Fprintf(w, "mv %s %s failed \n", src, dst)
+	}
+}
+
+func Cp(w http.ResponseWriter, r *http.Request) {
+	src := r.URL.Query().Get("src")
+	dst := r.URL.Query().Get("dst")
+	_, err := cp(src, dst)
+	if err == nil {
+		fmt.Fprintf(w, "cp %s %s \n", src, dst)
+	} else {
+		fmt.Fprintf(w, "cp %s %s failed \n", src, dst)
 	}
 }
 
@@ -33,5 +47,35 @@ func CreateFile(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "created file %s \n", path)
 	} else {
 		fmt.Fprintf(w, "couldn't create file %s \n", path)
+	}
+}
+
+func Mkdir(w http.ResponseWriter, r *http.Request) {
+	path := r.URL.Query().Get("path")
+	perm := r.URL.Query().Get("perm")
+	created := false
+	if len(perm) > 0 {
+		mask, err := strconv.Atoi(perm)
+		if err != nil {
+			log.Println(err)
+			fmt.Fprintf(w, "couldn't parse perm %s \n", perm)
+			return
+		}
+		created, _ = mkdir(path, os.FileMode(mask))
+	} else {
+		created, _ = mkdir(path, os.FileMode(0777))
+	}
+	if created {
+		fmt.Fprintf(w, "made directory %s \n", path)
+	} else {
+		fmt.Fprintf(w, "couldn't make directory %s \n", path)
+	}
+}
+
+func ReadFile(w http.ResponseWriter, r *http.Request) {
+	path := r.URL.Query().Get("path")
+	_, err := readFile(w, path)
+	if err == nil {
+		fmt.Fprintf(w, "couldn't read file %s \n", path)
 	}
 }

@@ -2,6 +2,7 @@ package hdfs
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"os"
 
@@ -38,6 +39,49 @@ func mv(src string, dst string) (bool, error) {
 	}
 }
 
+func cp(src string, dst string) (int64, error) {
+	r, err := hadoopClient.Open(src)
+	if err != nil {
+		log.Println(err)
+		return 0, err
+	}
+	w, err := hadoopClient.Create(dst)
+	if err != nil {
+		log.Println(err)
+		return 0, err
+	}
+
+	bytesCopied, err := io.Copy(w, r)
+	if err != nil {
+		log.Println(err)
+		return 0, err
+	} else {
+		log.Printf("cp %s %s \n", src, dst)
+	}
+	err = r.Close()
+	if err != nil {
+		log.Println(err)
+	}
+
+	err = w.Close()
+	if err != nil {
+		log.Println(err)
+	}
+
+	//not a lot we can do if closes fail
+	return bytesCopied, nil
+}
+
+func mkdir(path string, perm os.FileMode) (bool, error) {
+	err := hadoopClient.MkdirAll(path, perm)
+	if err != nil {
+		log.Println(err)
+		return false, err
+	}
+	log.Printf("mkdir %s \n", path)
+	return true, nil
+}
+
 func createEmptyFile(path string) (bool, error) {
 	err := hadoopClient.CreateEmptyFile(path)
 	if err != nil {
@@ -58,4 +102,24 @@ func getContentSummary(path string) (string, error) {
 		log.Printf("got content summary for %s \n", path)
 		return fmt.Sprintf("%s: \nsize %d \nsize after replication: %d \nspace quota: %d \ndirectory count %d \nfile count %d \nname quota %d", path, s.Size(), s.SizeAfterReplication(), s.SpaceQuota(), s.DirectoryCount(), s.FileCount(), s.NameQuota()), nil
 	}
+}
+
+func readFile(w io.Writer, path string) (int64, error) {
+	r, err := hadoopClient.Open(path)
+	if err != nil {
+		log.Println(err)
+		return 0, err
+	}
+	bytesCopied, err := io.Copy(w, r)
+	if err != nil {
+		log.Println(err)
+		return 0, err
+	} else {
+		log.Printf("reading from %s \n", path)
+	}
+	err = r.Close()
+	if err != nil {
+		log.Println(err)
+	}
+	return bytesCopied, nil
 }
