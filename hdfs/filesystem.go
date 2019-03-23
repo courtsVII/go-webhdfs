@@ -39,6 +39,23 @@ func mv(src *string, dst *string) (bool, error) {
 	}
 }
 
+func rm(path *string, recursive *bool) (bool, error) {
+	var err error = nil
+	if *recursive {
+		err = hadoopClient.RemoveAll(*path)
+	} else {
+		err = hadoopClient.Remove(*path)
+	}
+
+	if err != nil {
+		log.Println(err)
+		return false, err
+	} else {
+		log.Printf("rm %s \n", *path)
+		return true, nil
+	}
+}
+
 func cp(src *string, dst *string) (int64, error) {
 	r, err := hadoopClient.Open(*src)
 	if err != nil {
