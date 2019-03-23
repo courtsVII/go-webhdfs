@@ -28,24 +28,24 @@ func init() {
 	}
 }
 
-func mv(src string, dst string) (bool, error) {
-	err := hadoopClient.Rename(src, dst)
+func mv(src *string, dst *string) (bool, error) {
+	err := hadoopClient.Rename(*src, *dst)
 	if err != nil {
 		log.Println(err)
 		return false, err
 	} else {
-		log.Printf("mv %s %s \n", src, dst)
+		log.Printf("mv %s %s \n", *src, *dst)
 		return true, nil
 	}
 }
 
-func cp(src string, dst string) (int64, error) {
-	r, err := hadoopClient.Open(src)
+func cp(src *string, dst *string) (int64, error) {
+	r, err := hadoopClient.Open(*src)
 	if err != nil {
 		log.Println(err)
 		return 0, err
 	}
-	w, err := hadoopClient.Create(dst)
+	w, err := hadoopClient.Create(*dst)
 	if err != nil {
 		log.Println(err)
 		return 0, err
@@ -56,7 +56,7 @@ func cp(src string, dst string) (int64, error) {
 		log.Println(err)
 		return 0, err
 	} else {
-		log.Printf("cp %s %s \n", src, dst)
+		log.Printf("cp %s %s \n", *src, *dst)
 	}
 	err = r.Close()
 	if err != nil {
@@ -72,40 +72,40 @@ func cp(src string, dst string) (int64, error) {
 	return bytesCopied, nil
 }
 
-func mkdir(path string, perm os.FileMode) (bool, error) {
-	err := hadoopClient.MkdirAll(path, perm)
+func mkdir(path *string, perm *os.FileMode) (bool, error) {
+	err := hadoopClient.MkdirAll(*path, *perm)
 	if err != nil {
 		log.Println(err)
 		return false, err
 	}
-	log.Printf("mkdir %s \n", path)
+	log.Printf("mkdir %s \n", *path)
 	return true, nil
 }
 
-func createEmptyFile(path string) (bool, error) {
-	err := hadoopClient.CreateEmptyFile(path)
+func createEmptyFile(path *string) (bool, error) {
+	err := hadoopClient.CreateEmptyFile(*path)
 	if err != nil {
 		log.Println(err)
 		return false, err
 	} else {
-		log.Printf("created file %s \n", path)
+		log.Printf("created file %s \n", *path)
 		return true, nil
 	}
 }
 
-func getContentSummary(path string) (string, error) {
-	s, err := hadoopClient.GetContentSummary(path)
+func getContentSummary(path *string) (string, error) {
+	s, err := hadoopClient.GetContentSummary(*path)
 	if err != nil {
 		log.Println(err)
 		return "", err
 	} else {
-		log.Printf("got content summary for %s \n", path)
-		return fmt.Sprintf("%s: \nsize %d \nsize after replication: %d \nspace quota: %d \ndirectory count %d \nfile count %d \nname quota %d", path, s.Size(), s.SizeAfterReplication(), s.SpaceQuota(), s.DirectoryCount(), s.FileCount(), s.NameQuota()), nil
+		log.Printf("got content summary for %s \n", *path)
+		return fmt.Sprintf("%s: \nsize %d \nsize after replication: %d \nspace quota: %d \ndirectory count %d \nfile count %d \nname quota %d", *path, s.Size(), s.SizeAfterReplication(), s.SpaceQuota(), s.DirectoryCount(), s.FileCount(), s.NameQuota()), nil
 	}
 }
 
-func readFile(w io.Writer, path string) (int64, error) {
-	r, err := hadoopClient.Open(path)
+func readFile(w io.Writer, path *string) (int64, error) {
+	r, err := hadoopClient.Open(*path)
 	if err != nil {
 		log.Println(err)
 		return 0, err
@@ -115,7 +115,7 @@ func readFile(w io.Writer, path string) (int64, error) {
 		log.Println(err)
 		return 0, err
 	} else {
-		log.Printf("reading from %s \n", path)
+		log.Printf("reading from %s \n", *path)
 	}
 	err = r.Close()
 	if err != nil {

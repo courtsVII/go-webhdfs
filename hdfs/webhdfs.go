@@ -11,7 +11,7 @@ import (
 func Mv(w http.ResponseWriter, r *http.Request) {
 	src := r.URL.Query().Get("src")
 	dst := r.URL.Query().Get("dst")
-	moved, _ := mv(src, dst)
+	moved, _ := mv(&src, &dst)
 	if moved {
 		fmt.Fprintf(w, "mv %s %s \n", src, dst)
 	} else {
@@ -22,7 +22,7 @@ func Mv(w http.ResponseWriter, r *http.Request) {
 func Cp(w http.ResponseWriter, r *http.Request) {
 	src := r.URL.Query().Get("src")
 	dst := r.URL.Query().Get("dst")
-	_, err := cp(src, dst)
+	_, err := cp(&src, &dst)
 	if err == nil {
 		fmt.Fprintf(w, "cp %s %s \n", src, dst)
 	} else {
@@ -32,7 +32,7 @@ func Cp(w http.ResponseWriter, r *http.Request) {
 
 func GetContentSummary(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Query().Get("path")
-	summary, err := getContentSummary(path)
+	summary, err := getContentSummary(&path)
 	if err != nil {
 		fmt.Fprintf(w, "couldn't get content summary of file %s \n", path)
 	} else {
@@ -42,7 +42,7 @@ func GetContentSummary(w http.ResponseWriter, r *http.Request) {
 
 func CreateFile(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Query().Get("path")
-	created, _ := createEmptyFile(path)
+	created, _ := createEmptyFile(&path)
 	if created {
 		fmt.Fprintf(w, "created file %s \n", path)
 	} else {
@@ -61,9 +61,11 @@ func Mkdir(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "couldn't parse perm %s \n", perm)
 			return
 		}
-		created, _ = mkdir(path, os.FileMode(mask))
+		_mask := os.FileMode(mask)
+		created, _ = mkdir(&path, &_mask)
 	} else {
-		created, _ = mkdir(path, os.FileMode(0777))
+		mask := os.FileMode(0777)
+		created, _ = mkdir(&path, &mask)
 	}
 	if created {
 		fmt.Fprintf(w, "made directory %s \n", path)
@@ -74,7 +76,7 @@ func Mkdir(w http.ResponseWriter, r *http.Request) {
 
 func ReadFile(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Query().Get("path")
-	_, err := readFile(w, path)
+	_, err := readFile(w, &path)
 	if err == nil {
 		fmt.Fprintf(w, "couldn't read file %s \n", path)
 	}
