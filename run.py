@@ -15,7 +15,7 @@ parser=argparse.ArgumentParser()
 parser.add_argument('--hadoop_address', '-a', help='the address:port combination used to access your hadoop cluster', type=str, default="0.0.0.0:9000")
 parser.add_argument('--port', '-p', help='port to expose your container on', type=int, default=get_free_port())
 parser.add_argument('--detach', '-d', help='run container in detached mode or not', type=bool, default=True)
-parser.add_argument('--tag', '-t', help='tag for your image', type=str, default="go-webhdfs")
+parser.add_argument('--tag', '-t', help='tag for your container', type=str, default="go-webhdfs")
 
 args=parser.parse_args()
 
