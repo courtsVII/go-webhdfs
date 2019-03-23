@@ -3,7 +3,6 @@ package hdfs
 import (
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 
 	"github.com/colinmarc/hdfs"
@@ -28,17 +27,6 @@ func init() {
 	}
 }
 
-func Mv(w http.ResponseWriter, r *http.Request) {
-	src := r.URL.Query().Get("src")
-	dst := r.URL.Query().Get("dst")
-	moved, _ := mv(src, dst)
-	if moved {
-		fmt.Fprintf(w, "mv %s %s \n", src, dst)
-	} else {
-		fmt.Fprintf(w, "mv %s %s failed \n", src, dst)
-	}
-}
-
 func mv(src string, dst string) (bool, error) {
 	err := hadoopClient.Rename(src, dst)
 	if err != nil {
@@ -50,16 +38,6 @@ func mv(src string, dst string) (bool, error) {
 	}
 }
 
-func CreateFile(w http.ResponseWriter, r *http.Request) {
-	path := r.URL.Query().Get("path")
-	created, _ := createEmptyFile(path)
-	if created {
-		fmt.Fprintf(w, "created file %s \n", path)
-	} else {
-		fmt.Fprintf(w, "couldn't create file %s \n", path)
-	}
-}
-
 func createEmptyFile(path string) (bool, error) {
 	err := hadoopClient.CreateEmptyFile(path)
 	if err != nil {
@@ -68,17 +46,6 @@ func createEmptyFile(path string) (bool, error) {
 	} else {
 		log.Printf("created file %s \n", path)
 		return true, nil
-	}
-}
-
-func GetContentSummary(w http.ResponseWriter, r *http.Request) {
-	path := r.URL.Query().Get("path")
-	summary, err := getContentSummary(path)
-	if err != nil {
-		fmt.Fprintf(w, "couldn't get content summary of file %s \n", path)
-	} else {
-		fmt.Fprintf(w, summary)
-		log.Printf("got content summary for %s \n", path)
 	}
 }
 
