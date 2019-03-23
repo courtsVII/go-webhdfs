@@ -2,10 +2,8 @@ package hdfs
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"os"
-	"strconv"
 )
 
 func Mv(w http.ResponseWriter, r *http.Request) {
@@ -52,21 +50,8 @@ func CreateFile(w http.ResponseWriter, r *http.Request) {
 
 func Mkdir(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Query().Get("path")
-	perm := r.URL.Query().Get("perm")
-	created := false
-	if len(perm) > 0 {
-		mask, err := strconv.Atoi(perm)
-		if err != nil {
-			log.Println(err)
-			fmt.Fprintf(w, "couldn't parse perm %s \n", perm)
-			return
-		}
-		_mask := os.FileMode(mask)
-		created, _ = mkdir(&path, &_mask)
-	} else {
-		mask := os.FileMode(0777)
-		created, _ = mkdir(&path, &mask)
-	}
+	mask := os.FileMode(0777)
+	created, _ := mkdir(&path, &mask)
 	if created {
 		fmt.Fprintf(w, "made directory %s \n", path)
 	} else {
@@ -77,7 +62,29 @@ func Mkdir(w http.ResponseWriter, r *http.Request) {
 func ReadFile(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Query().Get("path")
 	_, err := readFile(w, &path)
-	if err == nil {
+	if err != nil {
 		fmt.Fprintf(w, "couldn't read file %s \n", path)
+	}
+}
+
+func Rm(w http.ResponseWriter, r *http.Request) {
+	path := r.URL.Query().Get("path")
+	recursive := false
+	removed, err := rm(&path, &recursive)
+	if err != nil || removed == false {
+		fmt.Fprintf(w, "couldn't remove %s \n", path)
+	} else {
+		fmt.Fprintf(w, "removed %s \n", path)
+	}
+}
+
+func RmAll(w http.ResponseWriter, r *http.Request) {
+	path := r.URL.Query().Get("path")
+	recursive := true
+	removed, err := rm(&path, &recursive)
+	if err != nil || removed == false {
+		fmt.Fprintf(w, "couldn't remove %s \n", path)
+	} else {
+		fmt.Fprintf(w, "removed %s \n", path)
 	}
 }
