@@ -105,8 +105,8 @@ func Chmod(w http.ResponseWriter, r *http.Request) {
 		_mask := os.FileMode(mask)
 		applied, _ = chmod(&path, &_mask)
 	} else {
-		mask := os.FileMode(0777)
-		applied, _ = chmod(&path, &mask)
+		fmt.Fprintf(w, "no mask provided \n")
+		return
 	}
 	if applied {
 		fmt.Fprintf(w, "chmod %s %s \n", perm, path)
