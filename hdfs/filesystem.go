@@ -121,6 +121,17 @@ func getContentSummary(path *string) (string, error) {
 	}
 }
 
+func chmod(path *string, mask *os.FileMode) (bool, error) {
+	err := hadoopClient.Chmod(*path, *mask)
+	if err != nil {
+		log.Println(err)
+		return false, err
+	} else {
+		log.Printf("chmod applied to %s \n", *path)
+		return true, nil
+	}
+}
+
 func readFile(w io.Writer, path *string) (int64, error) {
 	r, err := hadoopClient.Open(*path)
 	if err != nil {

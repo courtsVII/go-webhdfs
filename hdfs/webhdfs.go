@@ -2,8 +2,10 @@ package hdfs
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 func Mv(w http.ResponseWriter, r *http.Request) {
@@ -86,5 +88,29 @@ func RmAll(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "couldn't remove %s \n", path)
 	} else {
 		fmt.Fprintf(w, "removed %s \n", path)
+	}
+}
+
+func Chmod(w http.ResponseWriter, r *http.Request) {
+	path := r.URL.Query().Get("path")
+	perm := r.URL.Query().Get("mask")
+	applied := false
+	if len(perm) > 0 {
+		mask, err := strconv.Atoi(perm)
+		if err != nil {
+			log.Println(err)
+			fmt.Fprintf(w, "couldn't parse mask %s \n", perm)
+			return
+		}
+		_mask := os.FileMode(mask)
+		applied, _ = chmod(&path, &_mask)
+	} else {
+		mask := os.FileMode(0777)
+		applied, _ = chmod(&path, &mask)
+	}
+	if applied {
+		fmt.Fprintf(w, "chmod %s %s \n", perm, path)
+	} else {
+		fmt.Fprintf(w, "couldn't chmod %s \n", path)
 	}
 }
