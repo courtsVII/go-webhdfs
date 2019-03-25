@@ -132,6 +132,17 @@ func chmod(path *string, mask *os.FileMode) (bool, error) {
 	}
 }
 
+func chown(path *string, user *string, group *string) error {
+	err := hadoopClient.Chown(*path, *user, *group)	
+	if err != nil {
+		log.Println(err)
+		return err
+	} else {
+		log.Printf("chown user %s %s group applied to %s \n",*user, *group, *path)
+		return nil
+	}
+}
+
 func readFile(w io.Writer, path *string) (int64, error) {
 	r, err := hadoopClient.Open(*path)
 	if err != nil {

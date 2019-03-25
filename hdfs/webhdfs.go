@@ -91,6 +91,19 @@ func RmAll(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func Chown(w http.ResponseWriter, r *http.Request) {
+	path := r.URL.Query().Get("path")
+	user := r.URL.Query().Get("user")
+	group := r.URL.Query().Get("group")
+
+	err := chown(&path, &user, &group)
+	if err != nil {
+		fmt.Fprintf(w, "couldn't chown user %s group %s %s \n", user, group, path)
+	} else {
+		fmt.Fprintf(w, "chown user %s group %s %s \n", user, group, path)
+	}
+}
+
 func Chmod(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Query().Get("path")
 	perm := r.URL.Query().Get("mask")
