@@ -41,6 +41,7 @@ func mv(src *string, dst *string) (bool, error) {
 
 func rm(path *string, recursive *bool) (bool, error) {
 	var err error = nil
+
 	if *recursive {
 		err = hadoopClient.RemoveAll(*path)
 	} else {
@@ -133,12 +134,12 @@ func chmod(path *string, mask *os.FileMode) (bool, error) {
 }
 
 func chown(path *string, user *string, group *string) error {
-	err := hadoopClient.Chown(*path, *user, *group)	
+	err := hadoopClient.Chown(*path, *user, *group)
 	if err != nil {
 		log.Println(err)
 		return err
 	} else {
-		log.Printf("chown user %s %s group applied to %s \n",*user, *group, *path)
+		log.Printf("chown user %s %s group applied to %s \n", *user, *group, *path)
 		return nil
 	}
 }
@@ -157,6 +158,26 @@ func readFile(w io.Writer, path *string) (int64, error) {
 		log.Printf("reading from %s \n", *path)
 	}
 	err = r.Close()
+	if err != nil {
+		log.Println(err)
+	}
+	return bytesCopied, nil
+}
+
+func writeFile(r io.ReadCloser, path *string) (int64, error) {
+	w, err := hadoopClient.Create(*path)
+	if err != nil {
+		log.Println(err)
+		return 0, err
+	}
+	bytesCopied, err := io.Copy(w, r)
+	if err != nil {
+		log.Println(err)
+		return 0, err
+	} else {
+		log.Printf("writing to %s \n", *path)
+	}
+	err = w.Close()
 	if err != nil {
 		log.Println(err)
 	}

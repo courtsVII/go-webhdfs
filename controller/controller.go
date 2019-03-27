@@ -18,6 +18,7 @@ func main() {
 	http.HandleFunc("/v1/hdfs/rmall", hdfs.RmAll)
 	http.HandleFunc("/v1/hdfs/chmod", hdfs.Chmod)
 	http.HandleFunc("/v1/hdfs/chown", hdfs.Chown)
+	http.HandleFunc("/v1/hdfs/writefile", hdfs.WriteFile)
 
 	http.HandleFunc("/v1/up/", up)
 	log.Fatal(http.ListenAndServe("0.0.0.0:8000", nil))

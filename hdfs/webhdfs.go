@@ -25,6 +25,7 @@ func Cp(w http.ResponseWriter, r *http.Request) {
 	_, err := cp(&src, &dst)
 	if err == nil {
 		fmt.Fprintf(w, "cp %s %s \n", src, dst)
+		log.Println(err)
 	} else {
 		fmt.Fprintf(w, "cp %s %s failed \n", src, dst)
 	}
@@ -35,6 +36,7 @@ func GetContentSummary(w http.ResponseWriter, r *http.Request) {
 	summary, err := getContentSummary(&path)
 	if err != nil {
 		fmt.Fprintf(w, "couldn't get content summary of file %s \n", path)
+		log.Println(err)
 	} else {
 		fmt.Fprintf(w, summary)
 	}
@@ -66,6 +68,25 @@ func ReadFile(w http.ResponseWriter, r *http.Request) {
 	_, err := readFile(w, &path)
 	if err != nil {
 		fmt.Fprintf(w, "couldn't read file %s \n", path)
+		log.Println(err)
+	}
+}
+
+func WriteFile(w http.ResponseWriter, r *http.Request) {
+	path := r.URL.Query().Get("path")
+	rc := r.Body
+
+	_, err := writeFile(rc, &path)
+	if err != nil {
+		fmt.Fprintf(w, "couldn't write file %s \n", path)
+		log.Println(err)
+		return
+	}
+	err = rc.Close()
+	if err != nil {
+		fmt.Fprintf(w, "couldn't close request %s \n", path)
+		log.Println(err)
+		return
 	}
 }
 
@@ -73,7 +94,10 @@ func Rm(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Query().Get("path")
 	recursive := false
 	removed, err := rm(&path, &recursive)
-	if err != nil || removed == false {
+	if err != nil {
+		fmt.Fprintf(w, "couldn't remove %s \n", path)
+		log.Println(err)
+	} else if removed == false {
 		fmt.Fprintf(w, "couldn't remove %s \n", path)
 	} else {
 		fmt.Fprintf(w, "removed %s \n", path)
@@ -84,7 +108,10 @@ func RmAll(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Query().Get("path")
 	recursive := true
 	removed, err := rm(&path, &recursive)
-	if err != nil || removed == false {
+	if err != nil {
+		fmt.Fprintf(w, "couldn't remove %s \n", path)
+		log.Println(err)
+	} else if removed == false {
 		fmt.Fprintf(w, "couldn't remove %s \n", path)
 	} else {
 		fmt.Fprintf(w, "removed %s \n", path)
@@ -99,6 +126,7 @@ func Chown(w http.ResponseWriter, r *http.Request) {
 	err := chown(&path, &user, &group)
 	if err != nil {
 		fmt.Fprintf(w, "couldn't chown user %s group %s %s \n", user, group, path)
+		log.Println(err)
 	} else {
 		fmt.Fprintf(w, "chown user %s group %s %s \n", user, group, path)
 	}
@@ -110,9 +138,9 @@ func Chmod(w http.ResponseWriter, r *http.Request) {
 	applied := false
 	if len(perm) > 0 {
 		mask, err := strconv.Atoi(perm)
+		log.Println(err)
+		fmt.Fprintf(w, "couldn't parse mask %s \n", perm)
 		if err != nil {
-			log.Println(err)
-			fmt.Fprintf(w, "couldn't parse mask %s \n", perm)
 			return
 		}
 		_mask := os.FileMode(mask)
