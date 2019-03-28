@@ -59,11 +59,13 @@ func rm(path *string, recursive *bool) (bool, error) {
 
 func cp(src *string, dst *string) (int64, error) {
 	r, err := hadoopClient.Open(*src)
+	defer r.Close()
 	if err != nil {
 		log.Println(err)
 		return 0, err
 	}
 	w, err := hadoopClient.Create(*dst)
+	defer w.Close()
 	if err != nil {
 		log.Println(err)
 		return 0, err
@@ -76,17 +78,6 @@ func cp(src *string, dst *string) (int64, error) {
 	} else {
 		log.Printf("cp %s %s \n", *src, *dst)
 	}
-	err = r.Close()
-	if err != nil {
-		log.Println(err)
-	}
-
-	err = w.Close()
-	if err != nil {
-		log.Println(err)
-	}
-
-	//not a lot we can do if closes fail
 	return bytesCopied, nil
 }
 
@@ -146,6 +137,7 @@ func chown(path *string, user *string, group *string) error {
 
 func readFile(w io.Writer, path *string) (int64, error) {
 	r, err := hadoopClient.Open(*path)
+	defer r.Close()
 	if err != nil {
 		log.Println(err)
 		return 0, err
@@ -157,29 +149,30 @@ func readFile(w io.Writer, path *string) (int64, error) {
 	} else {
 		log.Printf("reading from %s \n", *path)
 	}
-	err = r.Close()
-	if err != nil {
-		log.Println(err)
-	}
 	return bytesCopied, nil
 }
 
-func writeFile(r io.ReadCloser, path *string) (int64, error) {
+func write(r io.ReadCloser, path *string) (int64, error) {
 	w, err := hadoopClient.Create(*path)
 	if err != nil {
 		log.Println(err)
 		return 0, err
 	}
-	bytesCopied, err := io.Copy(w, r)
-	if err != nil {
-		log.Println(err)
-		return 0, err
-	} else {
-		log.Printf("writing to %s \n", *path)
+	bytesCopied, writeErr := io.Copy(w, r)
+	flushErr := w.Flush()
+	closeErr := w.Close()
+	if flushErr != nil {
+		log.Println(writeErr)
 	}
-	err = w.Close()
-	if err != nil {
-		log.Println(err)
+	if writeErr != nil {
+		log.Println(writeErr)
 	}
+	if closeErr != nil {
+		log.Println(closeErr)
+	}
+	if writeErr != nil || closeErr != nil {
+		return bytesCopied, err
+	}
+	log.Printf("wrote to %s \n", *path)
 	return bytesCopied, nil
 }

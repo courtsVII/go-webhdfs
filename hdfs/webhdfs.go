@@ -74,17 +74,30 @@ func ReadFile(w http.ResponseWriter, r *http.Request) {
 
 func WriteFile(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Query().Get("path")
-	rc := r.Body
+	rc, _, err := r.FormFile("file")
+	defer rc.Close()
+	if err != nil {
+		fmt.Fprintf(w, "couldn't read file from request \n")
+		log.Println(err)
+		return
+	}
 
-	_, err := writeFile(rc, &path)
+	_, err = write(rc, &path)
 	if err != nil {
 		fmt.Fprintf(w, "couldn't write file %s \n", path)
 		log.Println(err)
 		return
 	}
-	err = rc.Close()
+}
+
+func Write(w http.ResponseWriter, r *http.Request) {
+	path := r.URL.Query().Get("path")
+	rc := r.Body
+	defer rc.Close()
+
+	_, err := write(rc, &path)
 	if err != nil {
-		fmt.Fprintf(w, "couldn't close request %s \n", path)
+		fmt.Fprintf(w, "couldn't write file %s \n", path)
 		log.Println(err)
 		return
 	}

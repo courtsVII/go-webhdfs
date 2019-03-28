@@ -50,3 +50,4 @@ print ("building docker image {}".format(args.tag))
 docker_client.images.build(path=".", tag=args.tag)
 print("running go-webhdfs on port: {}".format(args.port))
 docker_client.containers.run("go-webhdfs", detach=args.detach, ports =  {'8000': args.port}, environment=env_vars)
+
