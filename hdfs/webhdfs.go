@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 )
 
 func Mv(w http.ResponseWriter, r *http.Request) {
@@ -124,7 +125,7 @@ func Ls(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "couldn't ls %s \n", path)
 		log.Println(err)
 	} else {
-		fmt.Fprintf(w, "%s", response)
+		fmt.Fprintf(w, "%s\n", strings.Join(response, "\n"))
 	}
 }
 
