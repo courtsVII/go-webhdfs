@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/colinmarc/hdfs"
 )
@@ -99,6 +100,28 @@ func createEmptyFile(path *string) (bool, error) {
 	} else {
 		log.Printf("created file %s \n", *path)
 		return true, nil
+	}
+}
+
+func ls(startPath *string) (string, error) {
+	var response strings.Builder
+	first := true
+	err := hadoopClient.Walk(*startPath, func(path string, _ os.FileInfo, _ error) error {
+		if first {
+			first = false
+			return nil
+		}
+		response.WriteString(path)
+		response.WriteString("\n")
+		return nil
+	})
+
+	if err != nil {
+		log.Println(err)
+		return response.String(), err
+	} else {
+		log.Printf("ls %s \n", *startPath)
+		return response.String(), nil
 	}
 }
 

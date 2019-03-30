@@ -117,6 +117,17 @@ func Rm(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func Ls(w http.ResponseWriter, r *http.Request) {
+	path := r.URL.Query().Get("path")
+	response, err := ls(&path)
+	if err != nil {
+		fmt.Fprintf(w, "couldn't ls %s \n", path)
+		log.Println(err)
+	} else {
+		fmt.Fprintf(w, "%s", response)
+	}
+}
+
 func RmAll(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Query().Get("path")
 	recursive := true
