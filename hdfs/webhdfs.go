@@ -10,6 +10,8 @@ import (
 	"strings"
 )
 
+// Mv moves file from src to dst
+// *http.Request requires src and dst parameters
 func Mv(w http.ResponseWriter, r *http.Request) {
 	src := r.URL.Query().Get("src")
 	dst := r.URL.Query().Get("dst")
@@ -21,6 +23,8 @@ func Mv(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Cp copies file from src to dst
+// *http.Request requires src and dst parameters
 func Cp(w http.ResponseWriter, r *http.Request) {
 	src := r.URL.Query().Get("src")
 	dst := r.URL.Query().Get("dst")
@@ -33,6 +37,8 @@ func Cp(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// GetContentSummary gets HDFS content summary for specified path
+// *http.Request requires path parameter
 func GetContentSummary(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Query().Get("path")
 	summary, err := getContentSummary(&path)
@@ -44,6 +50,8 @@ func GetContentSummary(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// CreateFile creates empty file at specified path
+// *http.Request requires path parameter
 func CreateFile(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Query().Get("path")
 	created, _ := createEmptyFile(&path)
@@ -54,6 +62,8 @@ func CreateFile(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Mkdir creates directory at specified path
+// *http.Request requires path parameter
 func Mkdir(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Query().Get("path")
 	mask := os.FileMode(0777)
@@ -65,6 +75,8 @@ func Mkdir(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// ReadFile writes contents of file to http.ResponseWriter
+// *http.Request requires path parameter
 func ReadFile(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Query().Get("path")
 	_, err := readFile(w, &path)
@@ -74,6 +86,8 @@ func ReadFile(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// WriteFile writes request FormFile to a file in HDFS
+// *http.Request requires path parameter and a FormFile parameter named file
 func WriteFile(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Query().Get("path")
 	rc, _, err := r.FormFile("file")
@@ -92,6 +106,8 @@ func WriteFile(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Write writes request body to a file in HDFS
+// *http.Request requires path parameter
 func Write(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Query().Get("path")
 	rc := r.Body
@@ -105,6 +121,8 @@ func Write(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Rm removes file at specified path from HDFS
+// *http.Request requires path parameter
 func Rm(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Query().Get("path")
 	recursive := false
@@ -119,6 +137,8 @@ func Rm(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Ls lists files at specified HDFS path
+// *http.Request requires path parameter. Allows for an optional recursive parameter to be set to true. This will make the ls recursive
 func Ls(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Query().Get("path")
 	recursive := r.URL.Query().Get("recursive")
@@ -151,6 +171,8 @@ func Ls(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// RmAll removes filea at specified path from HDFS recursively
+// *http.Request requires path parameter
 func RmAll(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Query().Get("path")
 	recursive := true
@@ -165,6 +187,8 @@ func RmAll(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Chown changes ownership of file/directory in HDFS
+// *http.Request requires path, user and group parameters. Path is the path to file/folder to chown. User is the user to set file ownership as. Group is the group to set file ownership as.
 func Chown(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Query().Get("path")
 	user := r.URL.Query().Get("user")
@@ -179,6 +203,8 @@ func Chown(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Chmod chmod file at specified path from HDFS
+// *http.Request requires path parameter and mask parameter. Mask is specified in UNIX numeric permisson notation
 func Chmod(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Query().Get("path")
 	perm := r.URL.Query().Get("mask")

@@ -34,14 +34,13 @@ func mv(src *string, dst *string) (bool, error) {
 	if err != nil {
 		log.Println(err)
 		return false, err
-	} else {
-		log.Printf("mv %s %s \n", *src, *dst)
-		return true, nil
 	}
+	log.Printf("mv %s %s \n", *src, *dst)
+	return true, nil
 }
 
 func rm(path *string, recursive *bool) (bool, error) {
-	var err error = nil
+	var err error
 
 	if *recursive {
 		err = hadoopClient.RemoveAll(*path)
@@ -52,10 +51,9 @@ func rm(path *string, recursive *bool) (bool, error) {
 	if err != nil {
 		log.Println(err)
 		return false, err
-	} else {
-		log.Printf("rm %s \n", *path)
-		return true, nil
 	}
+	log.Printf("rm %s \n", *path)
+	return true, nil
 }
 
 func cp(src *string, dst *string) (int64, error) {
@@ -76,9 +74,8 @@ func cp(src *string, dst *string) (int64, error) {
 	if err != nil {
 		log.Println(err)
 		return 0, err
-	} else {
-		log.Printf("cp %s %s \n", *src, *dst)
 	}
+	log.Printf("cp %s %s \n", *src, *dst)
 	return bytesCopied, nil
 }
 
@@ -97,10 +94,9 @@ func createEmptyFile(path *string) (bool, error) {
 	if err != nil {
 		log.Println(err)
 		return false, err
-	} else {
-		log.Printf("created file %s \n", *path)
-		return true, nil
 	}
+	log.Printf("created file %s \n", *path)
+	return true, nil
 }
 
 func ls(startPath *string) ([]string, error) {
@@ -119,10 +115,9 @@ func ls(startPath *string) ([]string, error) {
 	if err != nil {
 		log.Println(err)
 		return response, err
-	} else {
-		log.Printf("ls %s \n", *startPath)
-		return response, nil
 	}
+	log.Printf("ls %s \n", *startPath)
+	return response, nil
 }
 
 func getContentSummary(path *string) (string, error) {
@@ -130,10 +125,9 @@ func getContentSummary(path *string) (string, error) {
 	if err != nil {
 		log.Println(err)
 		return "", err
-	} else {
-		log.Printf("got content summary for %s \n", *path)
-		return fmt.Sprintf("%s: \nsize %d \nsize after replication: %d \nspace quota: %d \ndirectory count %d \nfile count %d \nname quota %d", *path, s.Size(), s.SizeAfterReplication(), s.SpaceQuota(), s.DirectoryCount(), s.FileCount(), s.NameQuota()), nil
 	}
+	log.Printf("got content summary for %s \n", *path)
+	return fmt.Sprintf("%s: \nsize %d \nsize after replication: %d \nspace quota: %d \ndirectory count %d \nfile count %d \nname quota %d", *path, s.Size(), s.SizeAfterReplication(), s.SpaceQuota(), s.DirectoryCount(), s.FileCount(), s.NameQuota()), nil
 }
 
 func chmod(path *string, mask *os.FileMode) (bool, error) {
@@ -141,10 +135,9 @@ func chmod(path *string, mask *os.FileMode) (bool, error) {
 	if err != nil {
 		log.Println(err)
 		return false, err
-	} else {
-		log.Printf("chmod applied to %s \n", *path)
-		return true, nil
 	}
+	log.Printf("chmod applied to %s \n", *path)
+	return true, nil
 }
 
 func chown(path *string, user *string, group *string) error {
@@ -152,10 +145,9 @@ func chown(path *string, user *string, group *string) error {
 	if err != nil {
 		log.Println(err)
 		return err
-	} else {
-		log.Printf("chown user %s %s group applied to %s \n", *user, *group, *path)
-		return nil
 	}
+	log.Printf("chown user %s %s group applied to %s \n", *user, *group, *path)
+	return nil
 }
 
 func readFile(w io.Writer, path *string) (int64, error) {
@@ -169,9 +161,8 @@ func readFile(w io.Writer, path *string) (int64, error) {
 	if err != nil {
 		log.Println(err)
 		return 0, err
-	} else {
-		log.Printf("reading from %s \n", *path)
 	}
+	log.Printf("reading from %s \n", *path)
 	return bytesCopied, nil
 }
 
