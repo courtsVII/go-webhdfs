@@ -53,9 +53,10 @@ remove all files at specific location recursively
 path | HDFS path to file to remove
 
 ## ls
-ls files at specific location recursively
+ls files at specific location 
 #### params
 path | HDFS path to location to ls
+recursive | boolean value which specifies whether or not to do a recursive ls
 
 ## createfile
 create empty file at a specified destination

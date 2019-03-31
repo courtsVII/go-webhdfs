@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -120,7 +121,28 @@ func Rm(w http.ResponseWriter, r *http.Request) {
 
 func Ls(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Query().Get("path")
-	response, err := ls(&path)
+	recursive := r.URL.Query().Get("recursive")
+
+	var response = []string{}
+	var err error
+	if recursive == "true" {
+		response, err = ls(&path)
+	} else {
+		var fullList = []string{}
+		fullList, err = ls(&path)
+		regex := regexp.MustCompile("/")
+		matches := regex.FindAllStringIndex(path, -1)
+		slashes := len(matches)
+
+		for _, entry := range fullList {
+			matches = regex.FindAllStringIndex(entry, -1)
+			entrySlashes := len(matches)
+			if slashes == entrySlashes {
+				response = append(response, entry)
+			}
+		}
+	}
+
 	if err != nil {
 		fmt.Fprintf(w, "couldn't ls %s \n", path)
 		log.Println(err)
