@@ -19,6 +19,7 @@ this can be done manually or by executing either the run.sh or run.py script
 ##### run.sh can take the following parameters
 
 `-a` | the address of your Hadoop namenode. defaults to 0.0.0.0:9000
+
 `-p` | the port to expose the service on in your machine. If not specified random unassigned port is selected and printed to stdout
 
 #### run.py
@@ -26,8 +27,11 @@ this can be done manually or by executing either the run.sh or run.py script
 ##### run.py can take the following parameters
 
 `--env`  | the environment variables passed to the Docker file. (HADOOP_ADDRESS environment variable which specifies the address of your Hadoop namenode should be provided here)
+
 `--port` | the port to expose the service on in your machine. If not specified random unassigned port is selected and printed to stdout
+
 `--detach` | whether or not to run the container in detached mode
+
 `--tag` | tag for your container
 
 ## endpoints
@@ -37,6 +41,7 @@ this can be done manually or by executing either the run.sh or run.py script
 move file from source to destination
 
 `src` | HDFS source path
+
 `dst` | HDFS destination path
 
 ### `cp`
@@ -44,6 +49,7 @@ move file from source to destination
 copy file from source to destination
 
 `src` | HDFS source path
+
 `dst` | HDFS destination path
 
 ### `mkdir`
@@ -71,6 +77,7 @@ remove all files at specific location recursively
 ls files at specific location
 
 `path`| HDFS path to location to ls
+
 `recursive` | boolean value which specifies whether or not to do a recursive ls
 
 ### `createfile`
@@ -84,6 +91,7 @@ create empty file at a specified destination
 copy a file from the client into a file in HDFS
 
 `path` | HDFS path to create the replica file at
+
 `file` | multipart/form-data which represents the source file you wish to upload (e.g. curl -F 'file=@example.txt' -L  http://go-webhdfs-service:8000/v1/hdfs/writefile\?path\=/my/hdfs/location/example.txt)
 
 ### `write`
@@ -111,6 +119,7 @@ get contents summary of a file  in HDFS
 chmod a file  in HDFS
 
 `path` | HDFS path to the file to chmod
+
 `mask` | mask to apply to file
 
 ### `chown`
@@ -118,5 +127,7 @@ chmod a file  in HDFS
 chown a file  in HDFS
 
 `path` | HDFS path to the file to chown
+
 `user` | user to own file
+
 `group` | group to own file
