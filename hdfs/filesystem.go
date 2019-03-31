@@ -14,11 +14,12 @@ var hadoopClient *hdfs.Client
 func init() {
 	hadoopAddress := os.Getenv("HADOOP_ADDRESS")
 	if len(hadoopAddress) == 0 {
-		fmt.Printf("hadoop address not provided, using default 0.0.0.0:9000 \n")
+		fmt.Printf("HADOOP_ADDRESS not provided, using default 0.0.0.0:9000 \n")
 		hadoopAddress = "0.0.0.0:9000"
 	}
 	var err error
 	hadoopClient, err = hdfs.New(hadoopAddress)
+
 	if err != nil {
 		fmt.Printf("couldn't connect to hadoop on %s \n", hadoopAddress)
 		fmt.Println(err)
