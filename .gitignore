@@ -38,4 +38,4 @@ MANIFEST
 *.spec
 pip-log.txt
 pip-delete-this-directory.txt
-
+*.bak
