@@ -25,75 +25,75 @@ run.sh can take two parameters:
 
 ## endpoints
 
-### mv
+## mv
 move file from source to destination
-#### params
+### params
 src | HDFS source path
 dst | HDFS destination path
 
-### cp
+## cp
 copy file from source to destination
-#### params
+### params
 src | HDFS source path
 dst | HDFS destination path
 
-### mkdir
+## mkdir
 create a directory at specified location
-#### params
+### params
 path | HDFS path to create folder at
 
-### rm
+## rm
 remove file at specific location
-#### params
+### params
 path | HDFS path to file to remove
 
-### rmall
+## rmall
 remove all files at specific location recursively
-#### params
+### params
 path | HDFS path to file to remove
 
-### ls
+## ls
 ls files at specific location recursively
-#### params
+### params
 path | HDFS path to location to ls
 
-### createfile
+## createfile
 create empty file at a specified destination
-#### params
+### params
 path | HDFS path to create the empty file at
 
-### writefile
+## writefile
 copy a file from the client into a file in HDFS
-#### params
+### params
 path | HDFS path to create the replica file at
 file | multipart/form-data which represents the source file you wish to upload (e.g. curl -F 'file=@example.txt' -L  http://go-webhdfs-service:8000/v1/hdfs/writefile\?path\=/my/hdfs/location/example.txt)
 
-### write
+## write
 copy arbritary data from the HTTP request body into a file in HDFS
-#### params
+### params
 path | HDFS path to create the file at
 
-### readfile
+## readfile
 read or copy data from a file  in HDFS
-#### params
+### params
 path | HDFS path to the file to be read
 (e.g. curl -L  http://go-webhdfs-service:8000/v1/hdfs/readfile\?path\=/my/hdfs/location/example.txt > copyofexample.txt)
 
-### getcontentsummary
+## getcontentsummary
 get contents summary of a file  in HDFS
-#### params
+### params
 path | HDFS path to the file from which to getcontentsummary
     
 
-### chmod
+## chmod
 chmod a file  in HDFS
-#### params
+### params
 path | HDFS path to the file to chmod
 mask | mask to apply to file
 
-### chown
+## chown
 chmod a file  in HDFS
-#### params
+### params
 path | HDFS path to the file to chmod
 user | user to own file
 group | group to own file
